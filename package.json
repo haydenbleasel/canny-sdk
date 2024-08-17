@@ -2,9 +2,7 @@
   "name": "canny-sdk",
   "version": "1.0.0",
   "description": "A TypeScript implementation of the Canny SDK.",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -16,17 +14,13 @@
     "prepublishOnly": "pnpm build",
     "build": "tsup",
     "dev": "tsup --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "bun test/index.ts"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/haydenbleasel/canny-sdk.git"
   },
-  "keywords": [
-    "canny",
-    "sdk",
-    "typescript"
-  ],
+  "keywords": ["canny", "sdk", "typescript"],
   "author": "Hayden Bleasel <hello@haydenbleasel.com>",
   "license": "ISC",
   "bugs": {
@@ -35,6 +29,8 @@
   "homepage": "https://github.com/haydenbleasel/canny-sdk#readme",
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
+    "@types/node": "^22.4.0",
+    "dotenv": "^16.4.5",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",
     "ultracite": "4.0.5"
