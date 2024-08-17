@@ -18,13 +18,15 @@ export type CannyCategory = {
 
 export const getCannyCategory = async (
   apiKey: string,
-  id: string
+  props: {
+    id: string;
+  }
 ): Promise<CannyCategory> => {
   const payload = await ky
     .post('https://canny.io/api/v1/categories/retrieve', {
       json: {
         apiKey,
-        id,
+        id: props.id,
       },
     })
     .json<CannyCategory | { error: string }>();
@@ -38,19 +40,18 @@ export const getCannyCategory = async (
 
 export const createCannyCategory = async (
   apiKey: string,
-  boardId: string,
-  name: string,
-  parentId?: string,
-  subscribeAdmins?: boolean
+  props: {
+    boardID: string;
+    name: string;
+    parentID?: string;
+    subscribeAdmins?: boolean;
+  }
 ): Promise<{ id: string }> => {
   const payload = await ky
     .post('https://canny.io/api/v1/categories/create', {
       json: {
         apiKey,
-        boardId,
-        name,
-        parentId,
-        subscribeAdmins,
+        ...props,
       },
     })
     .json<{ id: string } | { error: string }>();
@@ -64,13 +65,15 @@ export const createCannyCategory = async (
 
 export const deleteCannyCategory = async (
   apiKey: string,
-  id: string
+  props: {
+    categoryID: string;
+  }
 ): Promise<{ success: boolean }> => {
   const payload = await ky
     .post('https://canny.io/api/v1/categories/delete', {
       json: {
         apiKey,
-        categoryID: id,
+        ...props,
       },
     })
     .json<{ success: boolean } | { error: string }>();

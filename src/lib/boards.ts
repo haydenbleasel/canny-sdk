@@ -13,13 +13,15 @@ export type CannyBoard = {
 
 export const getCannyBoard = async (
   apiKey: string,
-  id: string
+  props: {
+    id: string;
+  }
 ): Promise<CannyBoard> => {
   const payload = await ky
     .post('https://canny.io/api/v1/boards/retrieve', {
       json: {
         apiKey,
-        id,
+        id: props.id,
       },
     })
     .json<CannyBoard | { error: string }>();

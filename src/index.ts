@@ -25,8 +25,8 @@ export class Canny {
     list: async () => {
       return await getCannyBoards(this.apiKey);
     },
-    get: async (boardId: string) => {
-      return await getCannyBoard(this.apiKey, boardId);
+    get: async (props: Parameters<typeof getCannyBoard>[1]) => {
+      return await getCannyBoard(this.apiKey, props);
     },
   };
 
@@ -34,25 +34,14 @@ export class Canny {
     list: async (limit?: number) => {
       return await getCannyCategories(this.apiKey, limit);
     },
-    get: async (categoryId: string) => {
-      return await getCannyCategory(this.apiKey, categoryId);
+    get: async (props: Parameters<typeof getCannyCategory>[1]) => {
+      return await getCannyCategory(this.apiKey, props);
     },
-    create: async (
-      boardId: string,
-      name: string,
-      parentId?: string,
-      subscribeAdmins?: boolean
-    ) => {
-      return await createCannyCategory(
-        this.apiKey,
-        boardId,
-        name,
-        parentId,
-        subscribeAdmins
-      );
+    create: async (props: Parameters<typeof createCannyCategory>[1]) => {
+      return await createCannyCategory(this.apiKey, props);
     },
-    delete: async (categoryId: string) => {
-      return await deleteCannyCategory(this.apiKey, categoryId);
+    delete: async (props: Parameters<typeof deleteCannyCategory>[1]) => {
+      return await deleteCannyCategory(this.apiKey, props);
     },
   };
 
@@ -60,29 +49,8 @@ export class Canny {
     list: async (limit?: number) => {
       return await getCannyChangelogs(this.apiKey, limit);
     },
-    create: async (
-      title: string,
-      details: string,
-      type?: 'fixed' | 'improved' | 'new',
-      notify?: boolean,
-      published?: boolean,
-      publishedOn?: Date,
-      scheduledFor?: Date,
-      labelIDs?: string[],
-      postIDs?: string[]
-    ) => {
-      return await createCannyChangelog(
-        this.apiKey,
-        title,
-        details,
-        type,
-        notify,
-        published,
-        publishedOn,
-        scheduledFor,
-        labelIDs,
-        postIDs
-      );
+    create: async (props: Parameters<typeof createCannyChangelog>[1]) => {
+      return await createCannyChangelog(this.apiKey, props);
     },
   };
 

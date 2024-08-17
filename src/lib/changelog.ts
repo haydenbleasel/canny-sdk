@@ -55,29 +55,29 @@ export type CannyChangelog = {
 
 export const createCannyChangelog = async (
   apiKey: string,
-  title: string,
-  details: string,
-  type?: 'fixed' | 'improved' | 'new',
-  notify?: boolean,
-  published?: boolean,
-  publishedOn?: Date,
-  scheduledFor?: Date,
-  labelIDs?: string[],
-  postIDs?: string[]
+  props: {
+    title: string;
+    details: string;
+    type?: 'fixed' | 'improved' | 'new';
+    notify?: boolean;
+    published?: boolean;
+    publishedOn?: Date;
+    scheduledFor?: Date;
+    labelIDs?: string[];
+    postIDs?: string[];
+  }
 ): Promise<{ id: string }> => {
   const payload = await ky
     .post('https://canny.io/api/v1/entries/create', {
       json: {
         apiKey,
-        title,
-        details,
-        type,
-        notify,
-        published,
-        publishedOn: publishedOn ? publishedOn.toISOString() : undefined,
-        scheduledFor: scheduledFor ? scheduledFor.toISOString() : undefined,
-        labelIDs,
-        postIDs,
+        ...props,
+        publishedOn: props.publishedOn
+          ? props.publishedOn.toISOString()
+          : undefined,
+        scheduledFor: props.scheduledFor
+          ? props.scheduledFor.toISOString()
+          : undefined,
       },
     })
     .json<{ id: string } | { error: string }>();
