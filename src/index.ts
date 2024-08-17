@@ -30,7 +30,7 @@ export class Canny {
     this.apiKey = apiKey;
   }
 
-  boards = {
+  board = {
     list: async () => {
       return await getCannyBoards(this.apiKey);
     },
@@ -39,7 +39,7 @@ export class Canny {
     },
   };
 
-  categories = {
+  category = {
     list: async (limit?: number) => {
       return await getCannyCategories(this.apiKey, limit);
     },
@@ -54,7 +54,7 @@ export class Canny {
     },
   };
 
-  changelogs = {
+  changelog = {
     list: async (limit?: number) => {
       return await getCannyChangelogs(this.apiKey, limit);
     },
@@ -63,7 +63,7 @@ export class Canny {
     },
   };
 
-  comments = {
+  comment = {
     list: async (limit?: number) => {
       return await getCannyComments(this.apiKey, limit);
     },
