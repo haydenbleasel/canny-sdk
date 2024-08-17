@@ -1,3 +1,15 @@
+# v1.0.4 (Sat Aug 17 2024)
+
+#### ⚠️ Pushed to `main`
+
+- Add example image ([@haydenbleasel](https://github.com/haydenbleasel))
+
+#### Authors: 1
+
+- Hayden Bleasel ([@haydenbleasel](https://github.com/haydenbleasel))
+
+---
+
 # v1.0.3 (Sat Aug 17 2024)
 
 #### ⚠️ Pushed to `main`
