@@ -46,7 +46,7 @@ export const createCannyCategory = async (
     parentID?: string;
     subscribeAdmins?: boolean;
   }
-): Promise<{ id: string }> => {
+): Promise<{ id: CannyCategory['id'] }> => {
   const payload = await ky
     .post('https://canny.io/api/v1/categories/create', {
       json: {
@@ -54,7 +54,7 @@ export const createCannyCategory = async (
         ...props,
       },
     })
-    .json<{ id: string } | { error: string }>();
+    .json<{ id: CannyCategory['id'] } | { error: string }>();
 
   if ('error' in payload) {
     throw new Error(payload.error);
@@ -62,13 +62,12 @@ export const createCannyCategory = async (
 
   return payload;
 };
-
 export const deleteCannyCategory = async (
   apiKey: string,
   props: {
-    id: string;
+    id: CannyCategory['id'];
   }
-): Promise<{ success: boolean }> => {
+): Promise<void> => {
   const payload = await ky
     .post('https://canny.io/api/v1/categories/delete', {
       json: {
@@ -76,13 +75,13 @@ export const deleteCannyCategory = async (
         categoryID: props.id,
       },
     })
-    .json<{ success: boolean } | { error: string }>();
+    .json<'success' | { error: string }>();
 
-  if ('error' in payload) {
-    throw new Error(payload.error);
+  if (payload !== 'success') {
+    throw new Error(
+      'error' in payload ? payload.error : 'Unknown error occurred'
+    );
   }
-
-  return payload;
 };
 
 export const fetchCannyCategories = async (

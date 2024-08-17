@@ -19,7 +19,7 @@ export const updateCannyCompany = async (
     monthlySpend?: number;
     name?: string;
   }
-): Promise<CannyCompany> => {
+): Promise<{ id: CannyCompany['id'] }> => {
   const payload = await ky
     .post('https://canny.io/api/v1/companies/update', {
       json: {
@@ -28,7 +28,7 @@ export const updateCannyCompany = async (
         created: props.created?.toISOString(),
       },
     })
-    .json<CannyCompany | { error: string }>();
+    .json<{ id: CannyCompany['id'] } | { error: string }>();
 
   if ('error' in payload) {
     throw new Error(payload.error);
@@ -42,7 +42,7 @@ export const deleteCannyCompany = async (
   props: {
     id: string;
   }
-): Promise<{ success: boolean }> => {
+): Promise<void> => {
   const payload = await ky
     .post('https://canny.io/api/v1/companies/delete', {
       json: {
@@ -50,13 +50,13 @@ export const deleteCannyCompany = async (
         companyID: props.id,
       },
     })
-    .json<{ success: boolean } | { error: string }>();
+    .json<'success' | { error: string }>();
 
-  if ('error' in payload) {
-    throw new Error(payload.error);
+  if (payload !== 'success') {
+    throw new Error(
+      'error' in payload ? payload.error : 'Unknown error occurred'
+    );
   }
-
-  return payload;
 };
 
 export const fetchCannyCompanies = async (

@@ -66,7 +66,7 @@ export const createCannyChangelog = async (
     labelIDs?: string[];
     postIDs?: string[];
   }
-): Promise<{ id: string }> => {
+): Promise<{ id: CannyChangelog['id'] }> => {
   const payload = await ky
     .post('https://canny.io/api/v1/entries/create', {
       json: {
@@ -76,7 +76,7 @@ export const createCannyChangelog = async (
         scheduledFor: props.scheduledFor?.toISOString(),
       },
     })
-    .json<{ id: string } | { error: string }>();
+    .json<{ id: CannyChangelog['id'] } | { error: string }>();
 
   if ('error' in payload) {
     throw new Error(payload.error);

@@ -92,7 +92,7 @@ export const createCannyComment = async (
     parentID?: string;
     shouldNotifyVoters?: boolean;
   }
-): Promise<{ id: string }> => {
+): Promise<{ id: CannyComment['id'] }> => {
   const payload = await ky
     .post('https://canny.io/api/v1/comments/create', {
       json: {
@@ -100,7 +100,7 @@ export const createCannyComment = async (
         ...props,
       },
     })
-    .json<{ id: string } | { error: string }>();
+    .json<{ id: CannyComment['id'] } | { error: string }>();
 
   if ('error' in payload) {
     throw new Error(payload.error);
@@ -114,7 +114,7 @@ export const deleteCannyComment = async (
   props: {
     id: string;
   }
-): Promise<{ success: boolean }> => {
+): Promise<void> => {
   const payload = await ky
     .post('https://canny.io/api/v1/comments/delete', {
       json: {
@@ -122,13 +122,13 @@ export const deleteCannyComment = async (
         commentID: props.id,
       },
     })
-    .json<{ success: boolean } | { error: string }>();
+    .json<'success' | { error: string }>();
 
-  if ('error' in payload) {
-    throw new Error(payload.error);
+  if (payload !== 'success') {
+    throw new Error(
+      'error' in payload ? payload.error : 'Unknown error occurred'
+    );
   }
-
-  return payload;
 };
 
 export const fetchCannyComments = async (

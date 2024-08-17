@@ -268,18 +268,25 @@ export const updateCannyPost = async (
     imageURLs?: string[];
   }
 ): Promise<void> => {
-  await ky.post('https://canny.io/api/v1/posts/update', {
-    json: {
-      apiKey,
-      ...props,
-      eta: props.eta
-        ? props.eta.toLocaleDateString('en-US', {
-            month: '2-digit',
-            year: 'numeric',
-          })
-        : undefined,
-    },
-  });
+  const payload = await ky
+    .post('https://canny.io/api/v1/posts/update', {
+      json: {
+        apiKey,
+        ...props,
+        eta: props.eta
+          ? props.eta.toLocaleDateString('en-US', {
+              month: '2-digit',
+              year: 'numeric',
+            })
+          : undefined,
+      },
+    })
+    .json<'success' | { error: string }>();
+  if (payload !== 'success') {
+    throw new Error(
+      'error' in payload ? payload.error : 'Unknown error occurred'
+    );
+  }
 };
 
 export const fetchCannyPosts = async (
