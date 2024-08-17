@@ -1,4 +1,4 @@
-import { getCannyBoards } from './lib/boards';
+import { getCannyBoard, getCannyBoards } from './lib/boards';
 import { getCannyCategories } from './lib/categories';
 import { getCannyChangelogs } from './lib/changelog';
 import { getCannyComments } from './lib/comments';
@@ -16,9 +16,14 @@ export class Canny {
     this.apiKey = apiKey;
   }
 
-  async boards() {
-    return await getCannyBoards(this.apiKey);
-  }
+  boards = {
+    list: async () => {
+      return await getCannyBoards(this.apiKey);
+    },
+    get: async (boardId: string) => {
+      return await getCannyBoard(this.apiKey, boardId);
+    },
+  };
 
   async categories() {
     return await getCannyCategories(this.apiKey);

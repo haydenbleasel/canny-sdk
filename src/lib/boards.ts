@@ -11,14 +11,25 @@ export type CannyBoard = {
   url: string;
 };
 
-export type GetCannyBoardsResponse =
-  | {
-      boards: CannyBoard[];
-      hasMore: boolean;
-    }
-  | {
-      error: string;
-    };
+export const getCannyBoard = async (
+  apiKey: string,
+  id: string
+): Promise<CannyBoard> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/boards/retrieve', {
+      json: {
+        apiKey,
+        id,
+      },
+    })
+    .json<CannyBoard | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
 
 export const fetchCannyBoards = async (
   apiKey: string,
@@ -33,7 +44,15 @@ export const fetchCannyBoards = async (
         skip: offset * limit,
       },
     })
-    .json<GetCannyBoardsResponse>();
+    .json<
+      | {
+          boards: CannyBoard[];
+          hasMore: boolean;
+        }
+      | {
+          error: string;
+        }
+    >();
 
   if ('error' in payload) {
     throw new Error(payload.error);
