@@ -227,11 +227,11 @@ console.log('Post updated successfully');
 
 ```ts
 // List status changes
-const statusChanges = await canny.statusChanges.list();
+const statusChanges = await canny.statusChange.list();
 console.log(statusChanges);
 
 // List status changes for a specific board
-const statusChanges = await canny.statusChanges.list({
+const statusChanges = await canny.statusChange.list({
   boardID: 'board-id'
 });
 console.log(statusChanges);

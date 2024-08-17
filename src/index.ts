@@ -150,9 +150,9 @@ export class Canny {
     },
   };
 
-  statusChanges = {
-    list: async (props: Parameters<typeof getCannyStatusChanges>[1]) => {
-      return await getCannyStatusChanges(this.apiKey, props);
+  statusChange = {
+    list: async (props?: Parameters<typeof getCannyStatusChanges>[1]) => {
+      return await getCannyStatusChanges(this.apiKey, props ?? {});
     },
   };
 
