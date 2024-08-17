@@ -17,6 +17,7 @@ import {
   getCannyCompanies,
   updateCannyCompany,
 } from './lib/companies';
+import { getCannyOpportunities } from './lib/opportunities';
 import { getCannyPosts } from './lib/posts';
 import { getCannyStatusChanges } from './lib/status-change';
 import { getCannyTags } from './lib/tags';
@@ -87,6 +88,12 @@ export class Canny {
     },
     delete: async (props: Parameters<typeof deleteCannyCompany>[1]) => {
       return await deleteCannyCompany(this.apiKey, props);
+    },
+  };
+
+  opportunity = {
+    list: async (limit?: number) => {
+      return await getCannyOpportunities(this.apiKey, limit);
     },
   };
 
