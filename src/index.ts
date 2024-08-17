@@ -18,7 +18,16 @@ import {
   updateCannyCompany,
 } from './lib/companies';
 import { getCannyOpportunities } from './lib/opportunities';
-import { getCannyPosts } from './lib/posts';
+import {
+  addTagToCannyPost,
+  changeCannyPostCategory,
+  changeCannyPostStatus,
+  createCannyPost,
+  getCannyPost,
+  getCannyPosts,
+  removeTagFromCannyPost,
+  updateCannyPost,
+} from './lib/posts';
 import { getCannyStatusChanges } from './lib/status-change';
 import { getCannyTags } from './lib/tags';
 import { getCannyUsers } from './lib/users';
@@ -97,9 +106,38 @@ export class Canny {
     },
   };
 
-  async posts() {
-    return await getCannyPosts(this.apiKey);
-  }
+  post = {
+    list: async (limit?: number) => {
+      return await getCannyPosts(this.apiKey, limit);
+    },
+    get: async (props: Parameters<typeof getCannyPost>[1]) => {
+      return await getCannyPost(this.apiKey, props);
+    },
+    create: async (props: Parameters<typeof createCannyPost>[1]) => {
+      return await createCannyPost(this.apiKey, props);
+    },
+    update: async (props: Parameters<typeof updateCannyPost>[1]) => {
+      return await updateCannyPost(this.apiKey, props);
+    },
+    category: {
+      update: async (props: Parameters<typeof changeCannyPostCategory>[1]) => {
+        return await changeCannyPostCategory(this.apiKey, props);
+      },
+    },
+    status: {
+      update: async (props: Parameters<typeof changeCannyPostStatus>[1]) => {
+        return await changeCannyPostStatus(this.apiKey, props);
+      },
+    },
+    tag: {
+      add: async (props: Parameters<typeof addTagToCannyPost>[1]) => {
+        return await addTagToCannyPost(this.apiKey, props);
+      },
+      delete: async (props: Parameters<typeof removeTagFromCannyPost>[1]) => {
+        return await removeTagFromCannyPost(this.apiKey, props);
+      },
+    },
+  };
 
   async statusChanges() {
     return await getCannyStatusChanges(this.apiKey);

@@ -93,14 +93,194 @@ export type CannyPost = {
   url: string;
 };
 
-export type GetCannyPostsResponse =
-  | {
-      error: string;
-    }
-  | {
-      posts: CannyPost[];
-      hasMore: boolean;
-    };
+export const getCannyPost = async (
+  apiKey: string,
+  props: {
+    boardID?: string;
+    id?: string;
+    urlName?: string;
+  }
+): Promise<CannyPost> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/posts/retrieve', {
+      json: {
+        apiKey,
+        ...props,
+      },
+    })
+    .json<CannyPost | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
+
+export const createCannyPost = async (
+  apiKey: string,
+  props: {
+    authorID: string;
+    boardID: string;
+    byID?: string;
+    categoryID?: string;
+    customFields?: Record<string, string | number | boolean>;
+    details: string;
+    eta?: Date;
+    etaPublic?: boolean;
+    title: string;
+    ownerID?: string;
+    imageURLs?: string[];
+    createdAt?: Date;
+  }
+): Promise<{ id: CannyPost['id'] }> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/posts/create', {
+      json: {
+        apiKey,
+        ...props,
+        eta: props.eta
+          ? props.eta.toLocaleDateString('en-US', {
+              month: '2-digit',
+              year: 'numeric',
+            })
+          : undefined,
+        createdAt: props.createdAt?.toISOString(),
+      },
+    })
+    .json<{ id: CannyPost['id'] } | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
+
+export const changeCannyPostCategory = async (
+  apiKey: string,
+  props: {
+    postID: string;
+    categoryID?: string | null;
+  }
+): Promise<CannyPost> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/posts/change_category', {
+      json: {
+        apiKey,
+        ...props,
+      },
+    })
+    .json<CannyPost | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
+
+export const changeCannyPostStatus = async (
+  apiKey: string,
+  props: {
+    changerID: string;
+    postID: string;
+    shouldNotifyVoters: boolean;
+    status: string;
+    commentValue: string;
+    commentImageURLs: string[];
+  }
+): Promise<CannyPost> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/posts/change_status', {
+      json: {
+        apiKey,
+        ...props,
+
+        // If the comment includes line breaks, use " " instead of directly inputting the line breaks.
+        commentValue: props.commentValue.replace(/\n/g, ' '),
+      },
+    })
+    .json<CannyPost | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
+
+export const addTagToCannyPost = async (
+  apiKey: string,
+  props: {
+    postID: string;
+    tagID: string;
+  }
+): Promise<CannyPost> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/posts/add_tag', {
+      json: {
+        apiKey,
+        ...props,
+      },
+    })
+    .json<CannyPost | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
+
+export const removeTagFromCannyPost = async (
+  apiKey: string,
+  props: {
+    postID: string;
+    tagID: string;
+  }
+): Promise<CannyPost> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/posts/remove_tag', {
+      json: {
+        apiKey,
+        ...props,
+      },
+    })
+    .json<CannyPost | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
+
+export const updateCannyPost = async (
+  apiKey: string,
+  props: {
+    postID: string;
+    customFields?: Record<string, string | number | boolean>;
+    details?: string;
+    eta?: Date;
+    etaPublic?: boolean;
+    title?: string;
+    imageURLs?: string[];
+  }
+): Promise<void> => {
+  await ky.post('https://canny.io/api/v1/posts/update', {
+    json: {
+      apiKey,
+      ...props,
+      eta: props.eta
+        ? props.eta.toLocaleDateString('en-US', {
+            month: '2-digit',
+            year: 'numeric',
+          })
+        : undefined,
+    },
+  });
+};
 
 export const fetchCannyPosts = async (
   apiKey: string,
@@ -115,7 +295,15 @@ export const fetchCannyPosts = async (
         skip: offset * limit,
       },
     })
-    .json<GetCannyPostsResponse>();
+    .json<
+      | {
+          error: string;
+        }
+      | {
+          posts: CannyPost[];
+          hasMore: boolean;
+        }
+    >();
 
   if ('error' in payload) {
     throw new Error(payload.error);
