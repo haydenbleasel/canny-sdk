@@ -30,7 +30,13 @@ import {
 } from './lib/posts';
 import { getCannyStatusChanges } from './lib/status-change';
 import { createCannyTag, getCannyTag, getCannyTags } from './lib/tags';
-import { getCannyUsers } from './lib/users';
+import {
+  createOrUpdateCannyUser,
+  deleteCannyUser,
+  getCannyUser,
+  getCannyUsers,
+  removeCannyUserFromCompany,
+} from './lib/users';
 import { getCannyVotes } from './lib/votes';
 
 export class Canny {
@@ -157,9 +163,27 @@ export class Canny {
     },
   };
 
-  async users() {
-    return await getCannyUsers(this.apiKey);
-  }
+  user = {
+    list: async (limit?: number) => {
+      return await getCannyUsers(this.apiKey, limit);
+    },
+    get: async (props: Parameters<typeof getCannyUser>[1]) => {
+      return await getCannyUser(this.apiKey, props);
+    },
+    upsert: async (props: Parameters<typeof createOrUpdateCannyUser>[1]) => {
+      return await createOrUpdateCannyUser(this.apiKey, props);
+    },
+    delete: async (props: Parameters<typeof deleteCannyUser>[1]) => {
+      return await deleteCannyUser(this.apiKey, props);
+    },
+    company: {
+      remove: async (
+        props: Parameters<typeof removeCannyUserFromCompany>[1]
+      ) => {
+        return await removeCannyUserFromCompany(this.apiKey, props);
+      },
+    },
+  };
 
   async votes() {
     return await getCannyVotes(this.apiKey);
