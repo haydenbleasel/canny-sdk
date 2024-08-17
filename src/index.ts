@@ -1,5 +1,10 @@
 import { getCannyBoard, getCannyBoards } from './lib/boards';
-import { getCannyCategories } from './lib/categories';
+import {
+  createCannyCategory,
+  deleteCannyCategory,
+  getCannyCategories,
+  getCannyCategory,
+} from './lib/categories';
 import { getCannyChangelogs } from './lib/changelog';
 import { getCannyComments } from './lib/comments';
 import { getCannyCompanies } from './lib/companies';
@@ -25,9 +30,31 @@ export class Canny {
     },
   };
 
-  async categories() {
-    return await getCannyCategories(this.apiKey);
-  }
+  categories = {
+    list: async (limit?: number) => {
+      return await getCannyCategories(this.apiKey, limit);
+    },
+    get: async (categoryId: string) => {
+      return await getCannyCategory(this.apiKey, categoryId);
+    },
+    create: async (
+      boardId: string,
+      name: string,
+      parentId?: string,
+      subscribeAdmins?: boolean
+    ) => {
+      return await createCannyCategory(
+        this.apiKey,
+        boardId,
+        name,
+        parentId,
+        subscribeAdmins
+      );
+    },
+    delete: async (categoryId: string) => {
+      return await deleteCannyCategory(this.apiKey, categoryId);
+    },
+  };
 
   async changelogs() {
     return await getCannyChangelogs(this.apiKey);

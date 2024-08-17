@@ -16,14 +16,71 @@ export type CannyCategory = {
   url: string;
 };
 
-export type GetCannyCategoriesResponse =
-  | {
-      categories: CannyCategory[];
-      hasMore: boolean;
-    }
-  | {
-      error: string;
-    };
+export const getCannyCategory = async (
+  apiKey: string,
+  id: string
+): Promise<CannyCategory> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/categories/retrieve', {
+      json: {
+        apiKey,
+        id,
+      },
+    })
+    .json<CannyCategory | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
+
+export const createCannyCategory = async (
+  apiKey: string,
+  boardId: string,
+  name: string,
+  parentId?: string,
+  subscribeAdmins?: boolean
+): Promise<{ id: string }> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/categories/create', {
+      json: {
+        apiKey,
+        boardId,
+        name,
+        parentId,
+        subscribeAdmins,
+      },
+    })
+    .json<{ id: string } | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
+
+export const deleteCannyCategory = async (
+  apiKey: string,
+  id: string
+): Promise<{ success: boolean }> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/categories/delete', {
+      json: {
+        apiKey,
+        categoryID: id,
+      },
+    })
+    .json<{ success: boolean } | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
 
 export const fetchCannyCategories = async (
   apiKey: string,
@@ -38,7 +95,15 @@ export const fetchCannyCategories = async (
         skip: offset * limit,
       },
     })
-    .json<GetCannyCategoriesResponse>();
+    .json<
+      | {
+          categories: CannyCategory[];
+          hasMore: boolean;
+        }
+      | {
+          error: string;
+        }
+    >();
 
   if ('error' in payload) {
     throw new Error(payload.error);
