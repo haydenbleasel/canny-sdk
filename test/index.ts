@@ -94,7 +94,7 @@ async function runTests() {
       console.log('Single Post:', post);
 
       const updatedPost = await canny.post.update({
-        id: post.id,
+        postID: post.id,
         title: 'Updated Post Title',
       });
       console.log('Updated Post:', updatedPost);
@@ -108,7 +108,11 @@ async function runTests() {
       }
 
       const statusUpdatedPost = await canny.post.status.update({
+        changerID: '123',
         postID: post.id,
+        commentImageURLs: [],
+        commentValue: 'Test Comment',
+        shouldNotifyVoters: false,
         status: 'planned',
       });
       console.log('Status Updated Post:', statusUpdatedPost);
@@ -116,8 +120,8 @@ async function runTests() {
 
     // Test Status Changes functions
     console.log('\nTesting Status Changes functions...');
-    const statusChanges = await canny.statusChanges.list({
-      postID: posts[0].id,
+    const statusChanges = await canny.statusChange.list({
+      boardID: boards[0].id,
     });
     console.log('Status Changes:', statusChanges);
 
@@ -148,18 +152,18 @@ async function runTests() {
     }
 
     const newUser = await canny.user.upsert({
-      email: 'test@example.com',
       name: 'Test User',
+      userID: '123',
     });
     console.log('New/Updated User:', newUser);
 
     // Test Vote functions
     console.log('\nTesting Vote functions...');
-    const votes = await canny.votes.list();
+    const votes = await canny.vote.list();
     console.log('Votes:', votes);
 
     if (votes.length > 0) {
-      const vote = await canny.votes.get({ id: votes[0].id });
+      const vote = await canny.vote.get({ id: votes[0].id });
       console.log('Single Vote:', vote);
     }
 
