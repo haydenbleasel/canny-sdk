@@ -29,7 +29,7 @@ import {
   updateCannyPost,
 } from './lib/posts';
 import { getCannyStatusChanges } from './lib/status-change';
-import { getCannyTags } from './lib/tags';
+import { createCannyTag, getCannyTag, getCannyTags } from './lib/tags';
 import { getCannyUsers } from './lib/users';
 import { getCannyVotes } from './lib/votes';
 
@@ -145,9 +145,17 @@ export class Canny {
     },
   };
 
-  async tags() {
-    return await getCannyTags(this.apiKey);
-  }
+  tag = {
+    list: async (limit?: number) => {
+      return await getCannyTags(this.apiKey, limit);
+    },
+    get: async (props: Parameters<typeof getCannyTag>[1]) => {
+      return await getCannyTag(this.apiKey, props);
+    },
+    create: async (props: Parameters<typeof createCannyTag>[1]) => {
+      return await createCannyTag(this.apiKey, props);
+    },
+  };
 
   async users() {
     return await getCannyUsers(this.apiKey);
