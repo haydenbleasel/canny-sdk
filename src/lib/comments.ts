@@ -1,3 +1,5 @@
+import ky from 'ky';
+
 export type CannyComment = {
   id: string;
   author: {
@@ -71,22 +73,15 @@ export const fetchCannyComments = async (
   offset = 0
 ): Promise<CannyComment[]> => {
   const limit = 10_000;
-  const response = await fetch('https://canny.io/api/v1/comments/list', {
-    method: 'POST',
-    body: JSON.stringify({
-      apiKey,
-      limit,
-      skip: offset * limit,
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    next: {
-      revalidate: 0,
-    },
-  });
-
-  const payload = (await response.json()) as GetCannyCommentsResponse;
+  const payload = await ky
+    .post('https://canny.io/api/v1/comments/list', {
+      json: {
+        apiKey,
+        limit,
+        skip: offset * limit,
+      },
+    })
+    .json<GetCannyCommentsResponse>();
 
   if ('error' in payload) {
     throw new Error(payload.error);

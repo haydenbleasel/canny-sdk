@@ -1,3 +1,5 @@
+import ky from 'ky';
+
 export type CannyCategory = {
   id: string;
   board: {
@@ -28,22 +30,15 @@ export const fetchCannyCategories = async (
   offset = 0
 ): Promise<CannyCategory[]> => {
   const limit = 10_000;
-  const response = await fetch('https://canny.io/api/v1/categories/list', {
-    method: 'POST',
-    body: JSON.stringify({
-      apiKey,
-      limit,
-      skip: offset * limit,
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    next: {
-      revalidate: 0,
-    },
-  });
-
-  const payload = (await response.json()) as GetCannyCategoriesResponse;
+  const payload = await ky
+    .post('https://canny.io/api/v1/categories/list', {
+      json: {
+        apiKey,
+        limit,
+        skip: offset * limit,
+      },
+    })
+    .json<GetCannyCategoriesResponse>();
 
   if ('error' in payload) {
     throw new Error(payload.error);

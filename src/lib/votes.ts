@@ -1,3 +1,5 @@
+import ky from 'ky';
+
 export type CannyVote = {
   id: string;
   board: {
@@ -69,22 +71,15 @@ export const fetchCannyVotes = async (
   offset = 0
 ): Promise<CannyVote[]> => {
   const limit = 10_000;
-  const response = await fetch('https://canny.io/api/v1/votes/list', {
-    method: 'POST',
-    body: JSON.stringify({
-      apiKey,
-      limit,
-      skip: offset * limit,
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    next: {
-      revalidate: 0,
-    },
-  });
-
-  const payload = (await response.json()) as GetCannyVotesResponse;
+  const payload = await ky
+    .post('https://canny.io/api/v1/votes/list', {
+      json: {
+        apiKey,
+        limit,
+        skip: offset * limit,
+      },
+    })
+    .json<GetCannyVotesResponse>();
 
   if ('error' in payload) {
     throw new Error(payload.error);

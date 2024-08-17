@@ -1,3 +1,5 @@
+import ky from 'ky';
+
 export type CannyChangelog = {
   id: string;
   created: string;
@@ -65,22 +67,15 @@ export const fetchCannyChangelogs = async (
   offset = 0
 ): Promise<CannyChangelog[]> => {
   const limit = 10_000;
-  const response = await fetch('https://canny.io/api/v1/entries/list', {
-    method: 'POST',
-    body: JSON.stringify({
-      apiKey,
-      limit,
-      skip: offset * limit,
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    next: {
-      revalidate: 0,
-    },
-  });
-
-  const payload = (await response.json()) as GetCannyChangelogsResponse;
+  const payload = await ky
+    .post('https://canny.io/api/v1/entries/list', {
+      json: {
+        apiKey,
+        limit,
+        skip: offset * limit,
+      },
+    })
+    .json<GetCannyChangelogsResponse>();
 
   if ('error' in payload) {
     throw new Error(payload.error);

@@ -1,3 +1,5 @@
+import ky from 'ky';
+
 export type CannyBoard = {
   id: string;
   created: string;
@@ -18,15 +20,11 @@ export type GetCannyBoardsResponse =
     };
 
 export const getCannyBoards = async (apiKey: string): Promise<CannyBoard[]> => {
-  const response = await fetch('https://canny.io/api/v1/boards/list', {
-    method: 'POST',
-    body: JSON.stringify({ apiKey }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  const payload = (await response.json()) as GetCannyBoardsResponse;
+  const payload = await ky
+    .post('https://canny.io/api/v1/boards/list', {
+      json: { apiKey },
+    })
+    .json<GetCannyBoardsResponse>();
 
   if ('error' in payload) {
     throw new Error(payload.error);
