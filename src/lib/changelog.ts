@@ -72,12 +72,8 @@ export const createCannyChangelog = async (
       json: {
         apiKey,
         ...props,
-        publishedOn: props.publishedOn
-          ? props.publishedOn.toISOString()
-          : undefined,
-        scheduledFor: props.scheduledFor
-          ? props.scheduledFor.toISOString()
-          : undefined,
+        publishedOn: props.publishedOn?.toISOString(),
+        scheduledFor: props.scheduledFor?.toISOString(),
       },
     })
     .json<{ id: string } | { error: string }>();
