@@ -190,7 +190,7 @@ export class Canny {
     },
   };
 
-  votes = {
+  vote = {
     list: async (limit?: number) => {
       return await getCannyVotes(this.apiKey, limit);
     },

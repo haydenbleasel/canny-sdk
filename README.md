@@ -326,13 +326,13 @@ console.log(allUsers);
 
 ```ts
 // Retrieve a vote by ID
-const vote = await canny.votes.get({
+const vote = await canny.vote.get({
   id: 'vote-id'
 });
 console.log(vote);
 
 // Create a vote
-const createdVote = await canny.votes.create({
+const createdVote = await canny.vote.create({
   postID: 'post-id',
   voterID: 'voter-id',
   byID: 'optional-by-id'
@@ -340,13 +340,13 @@ const createdVote = await canny.votes.create({
 console.log(createdVote);
 
 // Delete a vote
-await canny.votes.delete({
+await canny.vote.delete({
   postID: 'post-id',
   voterID: 'voter-id'
 });
 console.log('Vote deleted successfully');
 
 // List all votes
-const allVotes = await canny.votes.list();
+const allVotes = await canny.vote.list();
 console.log(allVotes);
 ```
