@@ -26,9 +26,9 @@ export type GetCannyTagsResponse =
 
 export const fetchCannyTags = async (
   apiKey: string,
-  offset = 0
+  offset = 0,
+  limit = 10_000
 ): Promise<CannyTag[]> => {
-  const limit = 10_000;
   const payload = await ky
     .post('https://canny.io/api/v1/tags/list', {
       json: {
@@ -43,14 +43,17 @@ export const fetchCannyTags = async (
     throw new Error(payload.error);
   }
 
-  if (payload.hasMore) {
-    const nextPayload = await fetchCannyTags(apiKey, offset + 1);
+  const tags = payload.tags;
 
-    return [...payload.tags, ...nextPayload];
+  if (payload.hasMore) {
+    const nextTags = await fetchCannyTags(apiKey, offset + 1, limit);
+    return [...tags, ...nextTags];
   }
 
-  return payload.tags;
+  return tags;
 };
 
-export const getCannyTags = async (apiKey: string): Promise<CannyTag[]> =>
-  fetchCannyTags(apiKey);
+export const getCannyTags = async (
+  apiKey: string,
+  limit?: number
+): Promise<CannyTag[]> => fetchCannyTags(apiKey, 0, limit);

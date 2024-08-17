@@ -5,19 +5,13 @@ export type CannyUser = {
   avatarURL: string | null;
   companies: {
     created: string;
-    customFields: {
-      field1: string;
-      field2: string;
-    };
+    customFields: Record<string, string>;
     id: string;
     monthlySpend: number;
     name: string;
   }[];
   created: string;
-  customFields: {
-    field1: string;
-    field2: string;
-  };
+  customFields: Record<string, string>;
   email: string | null;
   isAdmin: boolean;
   lastActivity: string;
@@ -26,17 +20,13 @@ export type CannyUser = {
   userID: string | null;
 };
 
-export type GetCannyUsersResponse =
-  | CannyUser[]
-  | {
-      error: string;
-    };
+export type GetCannyUsersResponse = CannyUser[] | { error: string };
 
 export const fetchCannyUsers = async (
   apiKey: string,
-  offset = 0
+  offset = 0,
+  limit = 100
 ): Promise<CannyUser[]> => {
-  const limit = 100;
   const payload = await ky
     .post('https://canny.io/api/v1/users/list', {
       json: {
@@ -52,13 +42,14 @@ export const fetchCannyUsers = async (
   }
 
   if (payload.length === limit) {
-    const nextPayload = await fetchCannyUsers(apiKey, offset + 1);
-
+    const nextPayload = await fetchCannyUsers(apiKey, offset + 1, limit);
     return [...payload, ...nextPayload];
   }
 
   return payload;
 };
 
-export const getCannyUsers = async (apiKey: string): Promise<CannyUser[]> =>
-  fetchCannyUsers(apiKey);
+export const getCannyUsers = async (
+  apiKey: string,
+  limit?: number
+): Promise<CannyUser[]> => fetchCannyUsers(apiKey, 0, limit);

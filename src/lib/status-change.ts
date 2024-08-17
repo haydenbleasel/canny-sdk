@@ -82,9 +82,9 @@ export type GetCannyStatusChangesResponse =
 
 export const fetchCannyStatusChanges = async (
   apiKey: string,
-  offset = 0
+  offset = 0,
+  limit = 10_000
 ): Promise<CannyStatusChange[]> => {
-  const limit = 10_000;
   const payload = await ky
     .post('https://canny.io/api/v1/status_changes/list', {
       json: {
@@ -99,15 +99,21 @@ export const fetchCannyStatusChanges = async (
     throw new Error(payload.error);
   }
 
-  if (payload.hasMore) {
-    const nextPayload = await fetchCannyStatusChanges(apiKey, offset + 1);
+  const statusChanges = payload.statusChanges;
 
-    return [...payload.statusChanges, ...nextPayload];
+  if (payload.hasMore) {
+    const nextPayload = await fetchCannyStatusChanges(
+      apiKey,
+      offset + 1,
+      limit
+    );
+    return [...statusChanges, ...nextPayload];
   }
 
-  return payload.statusChanges;
+  return statusChanges;
 };
 
 export const getCannyStatusChanges = async (
-  apiKey: string
-): Promise<CannyStatusChange[]> => fetchCannyStatusChanges(apiKey);
+  apiKey: string,
+  limit?: number
+): Promise<CannyStatusChange[]> => fetchCannyStatusChanges(apiKey, 0, limit);

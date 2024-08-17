@@ -3,11 +3,7 @@ import ky from 'ky';
 export type CannyCompany = {
   id: string;
   created: string;
-  customFields: {
-    number: number;
-    bool: boolean;
-    string: string;
-  };
+  customFields: Record<string, number | boolean | string>;
   domain: string;
   memberCount: number;
   monthlySpend: number;
@@ -25,9 +21,9 @@ export type GetCannyCompaniesResponse =
 
 export const fetchCannyCompanies = async (
   apiKey: string,
-  offset = 0
+  offset = 0,
+  limit = 10_000
 ): Promise<CannyCompany[]> => {
-  const limit = 10_000;
   const payload = await ky
     .post('https://canny.io/api/v1/companies/list', {
       json: {
@@ -42,15 +38,17 @@ export const fetchCannyCompanies = async (
     throw new Error(payload.error);
   }
 
-  if (payload.hasMore) {
-    const nextPayload = await fetchCannyCompanies(apiKey, offset + 1);
+  const companies = payload.companies;
 
-    return [...payload.companies, ...nextPayload];
+  if (payload.hasMore) {
+    const nextCompanies = await fetchCannyCompanies(apiKey, offset + 1, limit);
+    return [...companies, ...nextCompanies];
   }
 
-  return payload.companies;
+  return companies;
 };
 
 export const getCannyCompanies = async (
-  apiKey: string
-): Promise<CannyCompany[]> => fetchCannyCompanies(apiKey);
+  apiKey: string,
+  limit?: number
+): Promise<CannyCompany[]> => fetchCannyCompanies(apiKey, 0, limit);

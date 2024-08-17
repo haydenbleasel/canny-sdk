@@ -64,9 +64,9 @@ export type GetCannyChangelogsResponse =
 
 export const fetchCannyChangelogs = async (
   apiKey: string,
-  offset = 0
+  offset = 0,
+  limit = 10_000
 ): Promise<CannyChangelog[]> => {
-  const limit = 10_000;
   const payload = await ky
     .post('https://canny.io/api/v1/entries/list', {
       json: {
@@ -81,15 +81,21 @@ export const fetchCannyChangelogs = async (
     throw new Error(payload.error);
   }
 
-  if (payload.hasMore) {
-    const nextPayload = await fetchCannyChangelogs(apiKey, offset + 1);
+  const changelogs = payload.entries;
 
-    return [...payload.entries, ...nextPayload];
+  if (payload.hasMore) {
+    const nextChangelogs = await fetchCannyChangelogs(
+      apiKey,
+      offset + 1,
+      limit
+    );
+    return [...changelogs, ...nextChangelogs];
   }
 
-  return payload.entries;
+  return changelogs;
 };
 
 export const getCannyChangelogs = async (
-  apiKey: string
-): Promise<CannyChangelog[]> => fetchCannyChangelogs(apiKey);
+  apiKey: string,
+  limit?: number
+): Promise<CannyChangelog[]> => fetchCannyChangelogs(apiKey, 0, limit);

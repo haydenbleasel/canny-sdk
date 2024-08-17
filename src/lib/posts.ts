@@ -104,9 +104,9 @@ export type GetCannyPostsResponse =
 
 export const fetchCannyPosts = async (
   apiKey: string,
-  offset = 0
+  offset = 0,
+  limit = 10_000
 ): Promise<CannyPost[]> => {
-  const limit = 10_000;
   const payload = await ky
     .post('https://canny.io/api/v1/posts/list', {
       json: {
@@ -121,14 +121,17 @@ export const fetchCannyPosts = async (
     throw new Error(payload.error);
   }
 
-  if (payload.hasMore) {
-    const nextPayload = await fetchCannyPosts(apiKey, offset + 1);
+  const posts = payload.posts;
 
-    return [...payload.posts, ...nextPayload];
+  if (payload.hasMore) {
+    const nextPosts = await fetchCannyPosts(apiKey, offset + 1, limit);
+    return [...posts, ...nextPosts];
   }
 
-  return payload.posts;
+  return posts;
 };
 
-export const getCannyPosts = async (apiKey: string): Promise<CannyPost[]> =>
-  fetchCannyPosts(apiKey);
+export const getCannyPosts = async (
+  apiKey: string,
+  limit?: number
+): Promise<CannyPost[]> => fetchCannyPosts(apiKey, 0, limit);

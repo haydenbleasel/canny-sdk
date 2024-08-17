@@ -70,9 +70,9 @@ export type GetCannyCommentsResponse =
 
 export const fetchCannyComments = async (
   apiKey: string,
-  offset = 0
+  offset = 0,
+  limit = 10_000
 ): Promise<CannyComment[]> => {
-  const limit = 10_000;
   const payload = await ky
     .post('https://canny.io/api/v1/comments/list', {
       json: {
@@ -87,15 +87,17 @@ export const fetchCannyComments = async (
     throw new Error(payload.error);
   }
 
-  if (payload.hasMore) {
-    const nextPayload = await fetchCannyComments(apiKey, offset + 1);
+  const comments = payload.comments;
 
-    return [...payload.comments, ...nextPayload];
+  if (payload.hasMore) {
+    const nextComments = await fetchCannyComments(apiKey, offset + 1, limit);
+    return [...comments, ...nextComments];
   }
 
-  return payload.comments;
+  return comments;
 };
 
 export const getCannyComments = async (
-  apiKey: string
-): Promise<CannyComment[]> => fetchCannyComments(apiKey);
+  apiKey: string,
+  limit?: number
+): Promise<CannyComment[]> => fetchCannyComments(apiKey, 0, limit);

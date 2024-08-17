@@ -27,9 +27,9 @@ export type GetCannyCategoriesResponse =
 
 export const fetchCannyCategories = async (
   apiKey: string,
-  offset = 0
+  offset = 0,
+  limit = 10_000
 ): Promise<CannyCategory[]> => {
-  const limit = 10_000;
   const payload = await ky
     .post('https://canny.io/api/v1/categories/list', {
       json: {
@@ -44,15 +44,21 @@ export const fetchCannyCategories = async (
     throw new Error(payload.error);
   }
 
-  if (payload.hasMore) {
-    const nextPayload = await fetchCannyCategories(apiKey, offset + 1);
+  const categories = payload.categories;
 
-    return [...payload.categories, ...nextPayload];
+  if (payload.hasMore) {
+    const nextCategories = await fetchCannyCategories(
+      apiKey,
+      offset + 1,
+      limit
+    );
+    return [...categories, ...nextCategories];
   }
 
-  return payload.categories;
+  return categories;
 };
 
 export const getCannyCategories = async (
-  apiKey: string
-): Promise<CannyCategory[]> => fetchCannyCategories(apiKey);
+  apiKey: string,
+  limit?: number
+): Promise<CannyCategory[]> => fetchCannyCategories(apiKey, 0, limit);
