@@ -108,6 +108,7 @@ export const fetchCannyStatusChanges = async (
   if (payload.hasMore) {
     const nextPayload = await fetchCannyStatusChanges(
       apiKey,
+      options,
       offset + 1,
       limit
     );
