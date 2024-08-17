@@ -57,14 +57,78 @@ export type CannyVote = {
   };
 };
 
-export type GetCannyVotesResponse =
-  | {
-      error: string;
-    }
-  | {
-      votes: CannyVote[];
-      hasMore: boolean;
-    };
+export const getCannyVote = async (
+  apiKey: string,
+  props: {
+    id: string;
+  }
+): Promise<CannyVote> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/votes/retrieve', {
+      json: {
+        apiKey,
+        ...props,
+      },
+    })
+    .json<CannyVote | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
+
+export const createCannyVote = async (
+  apiKey: string,
+  props: {
+    postID: string;
+    voterID: string;
+    byID?: string;
+  }
+): Promise<'success'> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/votes/create', {
+      json: {
+        apiKey,
+        ...props,
+      },
+    })
+    .json<'success' | { error: string }>();
+
+  if (payload !== 'success') {
+    throw new Error(
+      'error' in payload ? payload.error : 'Unknown error occurred'
+    );
+  }
+
+  return payload;
+};
+
+export const deleteCannyVote = async (
+  apiKey: string,
+  props: {
+    postID: string;
+    voterID: string;
+  }
+): Promise<'success'> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/votes/delete', {
+      json: {
+        apiKey,
+        ...props,
+      },
+    })
+    .json<'success' | { error: string }>();
+
+  if (payload !== 'success') {
+    throw new Error(
+      'error' in payload ? payload.error : 'Unknown error occurred'
+    );
+  }
+
+  return payload;
+};
 
 export const fetchCannyVotes = async (
   apiKey: string,
@@ -79,7 +143,15 @@ export const fetchCannyVotes = async (
         skip: offset * limit,
       },
     })
-    .json<GetCannyVotesResponse>();
+    .json<
+      | {
+          error: string;
+        }
+      | {
+          votes: CannyVote[];
+          hasMore: boolean;
+        }
+    >();
 
   if ('error' in payload) {
     throw new Error(payload.error);
