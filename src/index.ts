@@ -6,7 +6,12 @@ import {
   getCannyCategory,
 } from './lib/categories';
 import { createCannyChangelog, getCannyChangelogs } from './lib/changelog';
-import { getCannyComments } from './lib/comments';
+import {
+  createCannyComment,
+  deleteCannyComment,
+  getCannyComment,
+  getCannyComments,
+} from './lib/comments';
 import { getCannyCompanies } from './lib/companies';
 import { getCannyPosts } from './lib/posts';
 import { getCannyStatusChanges } from './lib/status-change';
@@ -54,9 +59,20 @@ export class Canny {
     },
   };
 
-  async comments() {
-    return await getCannyComments(this.apiKey);
-  }
+  comments = {
+    list: async (limit?: number) => {
+      return await getCannyComments(this.apiKey, limit);
+    },
+    get: async (props: Parameters<typeof getCannyComment>[1]) => {
+      return await getCannyComment(this.apiKey, props);
+    },
+    create: async (props: Parameters<typeof createCannyComment>[1]) => {
+      return await createCannyComment(this.apiKey, props);
+    },
+    delete: async (props: Parameters<typeof deleteCannyComment>[1]) => {
+      return await deleteCannyComment(this.apiKey, props);
+    },
+  };
 
   async companies() {
     return await getCannyCompanies(this.apiKey);

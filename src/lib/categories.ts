@@ -66,14 +66,14 @@ export const createCannyCategory = async (
 export const deleteCannyCategory = async (
   apiKey: string,
   props: {
-    categoryID: string;
+    id: string;
   }
 ): Promise<{ success: boolean }> => {
   const payload = await ky
     .post('https://canny.io/api/v1/categories/delete', {
       json: {
         apiKey,
-        ...props,
+        categoryID: props.id,
       },
     })
     .json<{ success: boolean } | { error: string }>();

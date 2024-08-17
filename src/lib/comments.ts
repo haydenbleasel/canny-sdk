@@ -59,14 +59,77 @@ export type CannyComment = {
   value: string;
 };
 
-export type GetCannyCommentsResponse =
-  | {
-      comments: CannyComment[];
-      hasMore: boolean;
-    }
-  | {
-      error: string;
-    };
+export const getCannyComment = async (
+  apiKey: string,
+  props: {
+    id: string;
+  }
+): Promise<CannyComment> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/comments/retrieve', {
+      json: {
+        apiKey,
+        id: props.id,
+      },
+    })
+    .json<CannyComment | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
+
+export const createCannyComment = async (
+  apiKey: string,
+  props: {
+    authorID?: string;
+    postID: string;
+    value: string;
+    imageURLs?: string[];
+    internal?: boolean;
+    parentID?: string;
+    shouldNotifyVoters?: boolean;
+  }
+): Promise<{ id: string }> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/comments/create', {
+      json: {
+        apiKey,
+        ...props,
+      },
+    })
+    .json<{ id: string } | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
+
+export const deleteCannyComment = async (
+  apiKey: string,
+  props: {
+    id: string;
+  }
+): Promise<{ success: boolean }> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/comments/delete', {
+      json: {
+        apiKey,
+        commentID: props.id,
+      },
+    })
+    .json<{ success: boolean } | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
 
 export const fetchCannyComments = async (
   apiKey: string,
@@ -81,7 +144,15 @@ export const fetchCannyComments = async (
         skip: offset * limit,
       },
     })
-    .json<GetCannyCommentsResponse>();
+    .json<
+      | {
+          comments: CannyComment[];
+          hasMore: boolean;
+        }
+      | {
+          error: string;
+        }
+    >();
 
   if ('error' in payload) {
     throw new Error(payload.error);
