@@ -2,6 +2,8 @@
 
 [![Version](https://img.shields.io/npm/v/canny-sdk.svg)](https://www.npmjs.org/package/canny-sdk) [![Build Status](https://github.com/haydenbleasel/canny-sdk/actions/workflows/push.yml/badge.svg?branch=main)](https://github.com/haydenbleasel/canny-sdk/actions?query=branch%3Amain)
 
+![canny-sdk](/sample.png)
+
 A TypeScript SDK for interacting with the Canny API, powered by [ky](https://github.com/sindresorhus/ky).
 
 ## Requirements
