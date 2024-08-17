@@ -53,14 +53,41 @@ export type CannyChangelog = {
   url: string;
 };
 
-export type GetCannyChangelogsResponse =
-  | {
-      entries: CannyChangelog[];
-      hasMore: boolean;
-    }
-  | {
-      error: string;
-    };
+export const createCannyChangelog = async (
+  apiKey: string,
+  title: string,
+  details: string,
+  type?: 'fixed' | 'improved' | 'new',
+  notify?: boolean,
+  published?: boolean,
+  publishedOn?: Date,
+  scheduledFor?: Date,
+  labelIDs?: string[],
+  postIDs?: string[]
+): Promise<{ id: string }> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/entries/create', {
+      json: {
+        apiKey,
+        title,
+        details,
+        type,
+        notify,
+        published,
+        publishedOn: publishedOn ? publishedOn.toISOString() : undefined,
+        scheduledFor: scheduledFor ? scheduledFor.toISOString() : undefined,
+        labelIDs,
+        postIDs,
+      },
+    })
+    .json<{ id: string } | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
 
 export const fetchCannyChangelogs = async (
   apiKey: string,
@@ -75,7 +102,15 @@ export const fetchCannyChangelogs = async (
         skip: offset * limit,
       },
     })
-    .json<GetCannyChangelogsResponse>();
+    .json<
+      | {
+          entries: CannyChangelog[];
+          hasMore: boolean;
+        }
+      | {
+          error: string;
+        }
+    >();
 
   if ('error' in payload) {
     throw new Error(payload.error);

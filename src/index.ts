@@ -5,7 +5,7 @@ import {
   getCannyCategories,
   getCannyCategory,
 } from './lib/categories';
-import { getCannyChangelogs } from './lib/changelog';
+import { createCannyChangelog, getCannyChangelogs } from './lib/changelog';
 import { getCannyComments } from './lib/comments';
 import { getCannyCompanies } from './lib/companies';
 import { getCannyPosts } from './lib/posts';
@@ -56,9 +56,35 @@ export class Canny {
     },
   };
 
-  async changelogs() {
-    return await getCannyChangelogs(this.apiKey);
-  }
+  changelogs = {
+    list: async (limit?: number) => {
+      return await getCannyChangelogs(this.apiKey, limit);
+    },
+    create: async (
+      title: string,
+      details: string,
+      type?: 'fixed' | 'improved' | 'new',
+      notify?: boolean,
+      published?: boolean,
+      publishedOn?: Date,
+      scheduledFor?: Date,
+      labelIDs?: string[],
+      postIDs?: string[]
+    ) => {
+      return await createCannyChangelog(
+        this.apiKey,
+        title,
+        details,
+        type,
+        notify,
+        published,
+        publishedOn,
+        scheduledFor,
+        labelIDs,
+        postIDs
+      );
+    },
+  };
 
   async comments() {
     return await getCannyComments(this.apiKey);
