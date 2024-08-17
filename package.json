@@ -1,0 +1,45 @@
+{
+  "name": "canny-sdk",
+  "version": "1.0.0",
+  "description": "A TypeScript implementation of the Canny SDK.",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "prepublishOnly": "pnpm build",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/haydenbleasel/canny-sdk.git"
+  },
+  "keywords": [
+    "canny",
+    "sdk",
+    "typescript"
+  ],
+  "author": "Hayden Bleasel <hello@haydenbleasel.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/haydenbleasel/canny-sdk/issues"
+  },
+  "homepage": "https://github.com/haydenbleasel/canny-sdk#readme",
+  "devDependencies": {
+    "@biomejs/biome": "1.8.3",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4",
+    "ultracite": "4.0.5"
+  },
+  "dependencies": {
+    "ky": "^1.7.0"
+  }
+}
