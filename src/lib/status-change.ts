@@ -82,9 +82,11 @@ export type GetCannyStatusChangesResponse =
 
 export const fetchCannyStatusChanges = async (
   apiKey: string,
-  options: {
-    boardID?: string;
-  },
+  options:
+    | {
+        boardID?: string;
+      }
+    | undefined,
   offset = 0,
   limit = 10_000
 ): Promise<CannyStatusChange[]> => {
@@ -94,7 +96,7 @@ export const fetchCannyStatusChanges = async (
         apiKey,
         limit,
         skip: offset * limit,
-        boardID: options.boardID,
+        boardID: options?.boardID,
       },
     })
     .json<GetCannyStatusChangesResponse>();
@@ -120,9 +122,11 @@ export const fetchCannyStatusChanges = async (
 
 export const getCannyStatusChanges = async (
   apiKey: string,
-  options: {
-    boardID?: string;
-  },
+  options?:
+    | {
+        boardID?: string;
+      }
+    | undefined,
   limit?: number
 ): Promise<CannyStatusChange[]> =>
   fetchCannyStatusChanges(apiKey, options, 0, limit);
