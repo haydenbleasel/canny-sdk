@@ -1,3 +1,17 @@
+# v1.0.5 (Sat Aug 17 2024)
+
+#### ⚠️ Pushed to `main`
+
+- Merge branch 'main' of https://github.com/haydenbleasel/canny-sdk ([@haydenbleasel](https://github.com/haydenbleasel))
+- Test fixes ([@haydenbleasel](https://github.com/haydenbleasel))
+- Fix typo ([@haydenbleasel](https://github.com/haydenbleasel))
+
+#### Authors: 1
+
+- Hayden Bleasel ([@haydenbleasel](https://github.com/haydenbleasel))
+
+---
+
 # v1.0.4 (Sat Aug 17 2024)
 
 #### ⚠️ Pushed to `main`
