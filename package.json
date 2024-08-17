@@ -1,8 +1,10 @@
 {
   "name": "canny-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A TypeScript implementation of the Canny SDK.",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -20,7 +22,11 @@
     "type": "git",
     "url": "git+https://github.com/haydenbleasel/canny-sdk.git"
   },
-  "keywords": ["canny", "sdk", "typescript"],
+  "keywords": [
+    "canny",
+    "sdk",
+    "typescript"
+  ],
   "author": "Hayden Bleasel <hello@haydenbleasel.com>",
   "license": "ISC",
   "bugs": {
