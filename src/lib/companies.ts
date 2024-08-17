@@ -10,14 +10,54 @@ export type CannyCompany = {
   name: string;
 };
 
-export type GetCannyCompaniesResponse =
-  | {
-      companies: CannyCompany[];
-      hasMore: boolean;
-    }
-  | {
-      error: string;
-    };
+export const updateCannyCompany = async (
+  apiKey: string,
+  props: {
+    id: string;
+    created?: Date;
+    customFields?: Record<string, number | boolean | string>;
+    monthlySpend?: number;
+    name?: string;
+  }
+): Promise<CannyCompany> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/companies/update', {
+      json: {
+        apiKey,
+        ...props,
+        created: props.created?.toISOString(),
+      },
+    })
+    .json<CannyCompany | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
+
+export const deleteCannyCompany = async (
+  apiKey: string,
+  props: {
+    id: string;
+  }
+): Promise<{ success: boolean }> => {
+  const payload = await ky
+    .post('https://canny.io/api/v1/companies/delete', {
+      json: {
+        apiKey,
+        companyID: props.id,
+      },
+    })
+    .json<{ success: boolean } | { error: string }>();
+
+  if ('error' in payload) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+};
 
 export const fetchCannyCompanies = async (
   apiKey: string,
@@ -32,7 +72,15 @@ export const fetchCannyCompanies = async (
         skip: offset * limit,
       },
     })
-    .json<GetCannyCompaniesResponse>();
+    .json<
+      | {
+          companies: CannyCompany[];
+          hasMore: boolean;
+        }
+      | {
+          error: string;
+        }
+    >();
 
   if ('error' in payload) {
     throw new Error(payload.error);
